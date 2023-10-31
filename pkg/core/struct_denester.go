@@ -57,14 +57,17 @@ func (denester StructDenester) Process(w io.Writer) error {
 	if len(locs) < 1 {
 		return fmt.Errorf("unable to find any structs to process")
 	}
+	diff := 0
 	for i, stct := range strcts {
 		denestedStrcts := denester.seperateStructs(stct)
 		var bout bytes.Buffer
 		for _, denested := range denestedStrcts {
 			bout.Write(denested)
-			bout.Write([]byte("\n"))
+			bout.Write([]byte("\n\n"))
 		}
-		bs = bs.overwrite(locs[i][0], locs[i][1], bout.Bytes())
+		bs = bs.overwrite(diff+locs[i][0], diff+locs[i][1], bout.Bytes())
+
+		diff += bout.Len() - (locs[i][1] - locs[i][0])
 	}
 	w.Write(bs)
 	return nil
@@ -93,7 +96,7 @@ func (denester StructDenester) seperateStructs(def StructDef) (defs []StructDef)
 			denester.seen[nested.GetHash()] = *hashedName
 			defs = append(defs, denester.seperateStructs(nested)...)
 		}
-		def = def.overwrite(loc[0], loc[1], []byte(fmt.Sprintf("%s %s", originalName, *hashedName)))
+		def = def.overwrite(loc[0], loc[1], []byte(fmt.Sprintf("%s *%s", originalName, *hashedName)))
 	}
 	defs = append([]StructDef{def}, defs...)
 	return

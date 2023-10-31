@@ -1,7 +1,7 @@
 package main
 
 type ContactDetails struct {
-	Person struct {
+	Person []struct {
 		Age  int
 		Name string
 	}
