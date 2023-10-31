@@ -82,21 +82,31 @@ func (denester StructDenester) seperateStructs(def StructDef) (defs []StructDef)
 		}
 		nested := make(StructDef, (loc[1]-loc[0])+5)
 		copy(nested, append([]byte("type "), def[loc[0]:loc[1]]...))
+		arrLoc := utils.FindOpenAndCloseLocations(nested, '[', ']', 0, 0)
+		if arrLoc != nil {
+			nested = nested.overwrite(arrLoc[0], arrLoc[1], []byte{})
+		}
 		originalName := nested.GetName()
 		hashedName := denester.lookupHash(nested.GetHash())
 		namedHash := denester.lookupName(originalName)
+
 		if namedHash == nil && hashedName == nil {
 			hashedName = utils.Ptr(nested.GetName())
 			namedHash = utils.Ptr(nested.GetHash())
 			denester.seen[*namedHash] = *hashedName
 			defs = append(defs, denester.seperateStructs(nested)...)
 		} else if namedHash != nil && hashedName == nil {
-			hashedName = utils.Ptr(fmt.Sprintf("%s_%s", nested.GetName(), (*namedHash)[:5]))
+			hashedName = utils.Ptr(fmt.Sprintf("%s_%s", nested.GetName(), nested.GetHash()[:5]))
 			nested = nested.RenameStruct(*hashedName)
 			denester.seen[nested.GetHash()] = *hashedName
 			defs = append(defs, denester.seperateStructs(nested)...)
 		}
-		def = def.overwrite(loc[0], loc[1], []byte(fmt.Sprintf("%s *%s", originalName, *hashedName)))
+
+		if arrLoc != nil {
+			def = def.overwrite(loc[0], loc[1], []byte(fmt.Sprintf("%s []%s", originalName, *hashedName)))
+		} else {
+			def = def.overwrite(loc[0], loc[1], []byte(fmt.Sprintf("%s *%s", originalName, *hashedName)))
+		}
 	}
 	defs = append([]StructDef{def}, defs...)
 	return

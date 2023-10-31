@@ -158,6 +158,10 @@ func TestGetNestedStructLocation(t *testing.T) {
 			offset:          1,
 			matchStructName: "C",
 		},
+		{
+			def:             []byte(`A struct { B []struct {} }`),
+			matchStructName: "B",
+		},
 	}
 	for _, test := range tests {
 		def := StructDef(test.def)

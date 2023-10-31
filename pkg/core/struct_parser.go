@@ -16,7 +16,7 @@ var (
 
 func init() {
 	structSigRegxp, _ = regexp.Compile(`type\s+[A-Za-z_0-9]+\s+struct`)
-	anonyStructSigRegxp, _ = regexp.Compile(`[A-Za-z_0-9]+\s+struct\s+{`)
+	anonyStructSigRegxp, _ = regexp.Compile(`([a-zA-Z_][a-zA-Z0-9_]*)\s*(\[\])?\s*struct\s+{`)
 }
 
 // StructParser uses regex and loops to read through a byte.Buffer and parse out structs and their respective parts (name, body, embedded structs).
@@ -34,7 +34,7 @@ func (s StructDef) getNamePosition() []int {
 		return nil
 	}
 	var lastByte byte = s[ex]
-	for lastByte == ' ' || lastByte == '	' && ex > 0 {
+	for (lastByte == ' ' || lastByte == '	' || lastByte == '[' || lastByte == ']') && ex > 0 {
 		ex--
 		lastByte = s[ex]
 	}

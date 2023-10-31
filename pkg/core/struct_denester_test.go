@@ -25,13 +25,13 @@ func TestSeperateStruct(t *testing.T) {
 			rootStructNames: []string{"A", "B", "D"},
 		},
 		{
-			// Should produce structs [A, B, D, C, D_44136] since C and F structs have identical struct bodies.
+			// Should produce structs [A, B, D, C, D_a46e2] since C and F structs have identical struct bodies.
 			// D should also be the first struct processed, since processing reads each struct as it is found.
 			// However since there is another struct with named D which does not match the existing definition for D,
 			// The character '_' and the last 5 characters from the result of hashing the structs body is concatinated onto the structs name.
 			// This is done wherever conflicts occur in the name of structs and ensures that no drastic name changes occur during processing.
 			bytes:           []byte(`type A struct { B struct { D struct {} } C struct { D struct { F struct {} }} }`),
-			rootStructNames: []string{"A", "B", "D", "C", "D_44136"},
+			rootStructNames: []string{"A", "B", "D", "C", "D_a46e2"},
 		},
 	}
 	for _, test := range testcases {
