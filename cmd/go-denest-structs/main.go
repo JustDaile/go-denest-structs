@@ -9,7 +9,7 @@ import (
 
 func main() {
 	var bs []byte
-	fi, _ := os.Stdin.Stat() // get the FileInfo struct describing the standard input.
+	fi, _ := os.Stdin.Stat()
 
 	if (fi.Mode() & os.ModeCharDevice) == 0 {
 		bs, _ = io.ReadAll(os.Stdin)

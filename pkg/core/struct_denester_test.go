@@ -31,7 +31,7 @@ func TestSeperateStruct(t *testing.T) {
 			// The character '_' and the last 5 characters from the result of hashing the structs body is concatinated onto the structs name.
 			// This is done wherever conflicts occur in the name of structs and ensures that no drastic name changes occur during processing.
 			bytes:           []byte(`type A struct { B struct { D struct {} } C struct { D struct { F struct {} }} }`),
-			rootStructNames: []string{"A", "B", "D", "C", "D_a46e2"},
+			rootStructNames: []string{"A", "B", "D", "C", "D_e1e02"},
 		},
 	}
 	for _, test := range testcases {

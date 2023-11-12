@@ -1,3 +1,3 @@
 module github.com/JustDaile/go-denest-structs
 
-go 1.21.3
+go 1.20

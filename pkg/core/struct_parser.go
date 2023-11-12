@@ -84,7 +84,14 @@ func (s StructDef) overwrite(sx, ex int, b []byte) (def StructDef) {
 // Should be used to prevent duplicate structs.
 func (s StructDef) GetHash() string {
 	h := sha256.New()
-	h.Write(utils.GetBytesBetween(s, '{', '}', 0, 0))
+	bs := utils.GetBytesBetween(s, '{', '}', 0, 0)
+	c := []byte{}
+	for _, b := range bs {
+		if b != '\n' && b != '\t' && b != ' ' {
+			c = append(c, b)
+		}
+	}
+	h.Write(c)
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
